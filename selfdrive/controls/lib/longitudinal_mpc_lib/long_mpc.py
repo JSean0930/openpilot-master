@@ -55,7 +55,7 @@ T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 6.0
+STOP_DISTANCE = 4.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -78,8 +78,23 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
-def get_stopped_equivalence_factor(v_lead):
-  return (v_lead**2) / (2 * COMFORT_BRAKE)
+#def get_stopped_equivalence_factor(v_lead):
+  #return (v_lead**2) / (2 * COMFORT_BRAKE)
+def get_stopped_equivalence_factor(v_lead, v_ego):
+  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
+  # away, resulting in an early demand for acceleration.
+  v_diff_offset = 0
+  v_diff_offset_max = 12
+  speed_to_reach_max_v_diff_offset = 26 # in kp/h
+  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
+  delta_speed = v_lead - v_ego
+  if np.all(delta_speed > 0):
+    v_diff_offset = delta_speed * 3 #2
+    v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
+                                                                    # increase in a linear behavior
+    v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
+  return (v_lead**2) / (2 * COMFORT_BRAKE) + v_diff_offset
+
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
