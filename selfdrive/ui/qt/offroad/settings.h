@@ -108,7 +108,6 @@ class TimpilotPanel : public QWidget {
 private:
   QStackedLayout* main_layout = nullptr;
   QWidget* home = nullptr;
-  ForceCarRecognition* setCar = nullptr;
 
   QWidget* home_widget;
 
