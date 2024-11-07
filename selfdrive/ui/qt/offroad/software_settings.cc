@@ -114,6 +114,14 @@ void SoftwarePanel::updateLabels() {
     return;
   }
 
+  // dp on/off btn
+  if (params.getBool("dp_device_offroad")) {
+    onOffBtn->setText(tr("Go Onroad"));
+  } else {
+    onOffBtn->setText(tr("Go Offroad"));
+  }
+
+  
   // updater only runs offroad
   onroadLbl->setVisible(is_onroad);
   downloadBtn->setVisible(!is_onroad);
