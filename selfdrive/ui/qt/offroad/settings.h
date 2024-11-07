@@ -92,6 +92,8 @@ private:
   ButtonControl *installBtn;
   ButtonControl *downloadBtn;
   ButtonControl *targetBranchBtn;
+  // dp
+  ButtonControl *onOffBtn;
 
   Params params;
   ParamWatcher *fs_watch;
