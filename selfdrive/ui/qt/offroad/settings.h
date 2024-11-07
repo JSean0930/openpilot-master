@@ -101,16 +101,3 @@ private:
   Params params;
   ParamWatcher *fs_watch;
 };
-
-class TimpilotPanel : public QWidget {
-  Q_OBJECT
-
-private:
-  QStackedLayout* main_layout = nullptr;
-  QWidget* home = nullptr;
-
-  QWidget* home_widget;
-
-public:
-  explicit TimpilotPanel(QWidget *parent = nullptr);
-};
