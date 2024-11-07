@@ -9,7 +9,6 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
-#include <QStackedLayout>
 
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
@@ -42,7 +41,6 @@ class DevicePanel : public ListWidget {
   Q_OBJECT
 public:
   explicit DevicePanel(SettingsWindow *parent);
-  void showEvent(QShowEvent *event) override;
 
 signals:
   void reviewTrainingGuide();
