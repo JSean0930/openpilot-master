@@ -44,6 +44,7 @@ class DevicePanel : public ListWidget {
   Q_OBJECT
 public:
   explicit DevicePanel(SettingsWindow *parent);
+  void showEvent(QShowEvent *event) override;
 
 signals:
   void reviewTrainingGuide();
@@ -95,7 +96,6 @@ private:
   ButtonControl *installBtn;
   ButtonControl *downloadBtn;
   ButtonControl *targetBranchBtn;
-  // dp
   ButtonControl *onOffBtn;
 
   Params params;
