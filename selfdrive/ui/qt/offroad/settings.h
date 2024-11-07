@@ -9,10 +9,13 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QWidget>
+#include <QStackedLayout>
 
 #include "selfdrive/ui/ui.h"
 #include "selfdrive/ui/qt/util.h"
 #include "selfdrive/ui/qt/widgets/controls.h"
+
+QFrame *horizontal_line(QWidget *parent = nullptr);
 
 // ********** settings window + top-level panels **********
 class SettingsWindow : public QFrame {
