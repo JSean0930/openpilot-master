@@ -5,7 +5,12 @@
 #include <string>
 
 #include <QDebug>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QLabel>
+#include <QProcess>
+
 
 #include "common/params.h"
 #include "common/util.h"
