@@ -280,6 +280,8 @@ class Updater:
 
     self.params.put_bool("UpdaterFetchAvailable", self.update_available)
     if len(self.branches):
+      
+      filtered_branches = self.filter_branches(self.branches.keys(), allowed_prefixes)
       self.params.put("UpdaterAvailableBranches", ','.join(self.branches.keys()))
 
     last_update = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
