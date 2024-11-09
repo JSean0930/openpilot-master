@@ -271,6 +271,9 @@ class Updater:
   def get_commit_hash(self, path: str = OVERLAY_MERGED) -> str:
     return run(["git", "rev-parse", "HEAD"], path).rstrip()
 
+  def filter_branches(self, branches, prefixes):
+    return [branch for branch in branches if any(branch.startswith(prefix) for prefix in prefixes)]
+  
   def set_params(self, update_success: bool, failed_count: int, exception: str | None) -> None:
     self.params.put("UpdateFailedCount", str(failed_count))
     self.params.put("UpdaterTargetBranch", self.target_branch)
