@@ -60,11 +60,11 @@ STOP_DISTANCE = 5.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    return 1.5
+    return 2.0
   elif personality==log.LongitudinalPersonality.standard:
     return 1.0
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 0.5
+    return 1.0
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -75,7 +75,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.1
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 1.0
+    return 0.9
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
@@ -92,7 +92,7 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   delta_speed = v_lead - v_ego
   #delta_speed = 0.0 if abs(v_lead) < 0.5 else v_lead - v_ego
   if np.all(delta_speed > 0):
-    v_diff_offset = delta_speed * 30 #2 / 20
+    v_diff_offset = delta_speed * 35 #2 / 30
     v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
                                                                     # increase in a linear behavior
     v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
