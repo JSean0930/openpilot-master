@@ -124,6 +124,7 @@ void SoftwarePanel::updateLabels() {
   fs_watch->addParam("UpdateFailedCount");
   fs_watch->addParam("UpdaterState");
   fs_watch->addParam("UpdateAvailable");
+  fs_watch->addParam("dp_device_offroad");
 
   if (!isVisible()) {
     return;
