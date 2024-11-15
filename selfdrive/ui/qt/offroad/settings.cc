@@ -205,13 +205,13 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 
   auto dcamBtn = new ButtonControl(tr("Driver Camera"), tr("PREVIEW"),
                                    tr("Preview the driver facing camera to ensure that driver monitoring has good visibility. (vehicle must be off)"));
-  #connect(dcamBtn, &ButtonControl::clicked, [this, dcamBtn]() {
-    #camBtn->setEnabled(false);
-    #riverViewDialog driver_view(this);
-    #river_view.exec();
-    #dcamBtn->setEnabled(true);
-  ##});
-  ##addItem(dcamBtn);
+  // #connect(dcamBtn, &ButtonControl::clicked, [this, dcamBtn]() {
+    // #camBtn->setEnabled(false);
+    // #riverViewDialog driver_view(this);
+    // #river_view.exec();
+    // #dcamBtn->setEnabled(true);
+  // ##});
+  // ##addItem(dcamBtn);
 
   connect(dcamBtn, &ButtonControl::clicked, [=]() { emit showDriverView(); });
   connect(uiState(), &UIState::offroadTransition, dcamBtn, &QPushButton::setEnabled);
@@ -260,13 +260,13 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   QObject::connect(uiState()->prime_state, &PrimeState::changed, [this] (PrimeState::Type type) {
     pair_device->setVisible(type == PrimeState::PRIME_TYPE_UNPAIRED);
   });
-  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
-    for (auto btn : findChildren<ButtonControl *>()) {
-      if (btn != pair_device) {
-        btn->setEnabled(offroad);
-      }
-    }
-  });
+//  QObject::connect(uiState(), &UIState::offroadTransition, [=](bool offroad) {
+//    for (auto btn : findChildren<ButtonControl *>()) {
+//      if (btn != pair_device) {
+//        btn->setEnabled(offroad);
+//      }
+//    }
+//  });
 
   // power buttons
   QHBoxLayout *power_layout = new QHBoxLayout();
@@ -282,9 +282,9 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   power_layout->addWidget(poweroff_btn);
   QObject::connect(poweroff_btn, &QPushButton::clicked, this, &DevicePanel::poweroff);
 
-  if (!Hardware::PC()) {
-    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
-  }
+//  if (!Hardware::PC()) {
+//    connect(uiState(), &UIState::offroadTransition, poweroff_btn, &QPushButton::setVisible);
+//  }
 
   setStyleSheet(R"(
     #reboot_btn { height: 120px; border-radius: 15px; background-color: #393939; }
