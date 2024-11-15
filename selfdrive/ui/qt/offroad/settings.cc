@@ -205,12 +205,16 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
 
   auto dcamBtn = new ButtonControl(tr("Driver Camera"), tr("PREVIEW"),
                                    tr("Preview the driver facing camera to ensure that driver monitoring has good visibility. (vehicle must be off)"));
-  connect(dcamBtn, &ButtonControl::clicked, [this, dcamBtn]() {
-    dcamBtn->setEnabled(false);
-    DriverViewDialog driver_view(this);
-    driver_view.exec();
-    dcamBtn->setEnabled(true);
-  });
+  #connect(dcamBtn, &ButtonControl::clicked, [this, dcamBtn]() {
+    #camBtn->setEnabled(false);
+    #riverViewDialog driver_view(this);
+    #river_view.exec();
+    #dcamBtn->setEnabled(true);
+  ##});
+  ##addItem(dcamBtn);
+
+  connect(dcamBtn, &ButtonControl::clicked, [=]() { emit showDriverView(); });
+  connect(uiState(), &UIState::offroadTransition, dcamBtn, &QPushButton::setEnabled);
   addItem(dcamBtn);
 
   auto resetCalibBtn = new ButtonControl(tr("Reset Calibration"), tr("RESET"), "");
