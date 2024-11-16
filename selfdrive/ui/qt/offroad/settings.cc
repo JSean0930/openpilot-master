@@ -213,7 +213,6 @@ DevicePanel::DevicePanel(SettingsWindow *parent) : ListWidget(parent) {
   // ##});
   // ##addItem(dcamBtn);
 
-  connect(dcamBtn, &ButtonControl::clicked, [=]() { emit showDriverView(); });
   connect(uiState(), &UIState::offroadTransition, dcamBtn, &QPushButton::setEnabled);
   addItem(dcamBtn);
 
