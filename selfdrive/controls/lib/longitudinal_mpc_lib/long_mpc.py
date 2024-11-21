@@ -353,7 +353,7 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-    t_follow = get_T_FOLLOW(personality)
+    #t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
@@ -361,7 +361,7 @@ class LongitudinalMpc:
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
     lead = radarstate.leadOne
 
-    self.smoother_braking = True if self.mode == 'acc' and np.any(v_ego < 40) and np.any(lead_xv_0[:,0] < 41) and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
+    self.smoother_braking = True if self.mode == 'acc' and np.any(v_ego < 40) and np.any(lead_xv_0[:,0] < 40) and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
     if self.smoother_braking:
     distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
     self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
