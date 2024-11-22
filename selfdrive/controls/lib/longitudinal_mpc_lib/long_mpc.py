@@ -87,7 +87,7 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   # away, resulting in an early demand for acceleration.
   v_diff_offset = 0
   v_diff_offset_max = 2 #12
-  speed_to_reach_max_v_diff_offset = 2 #26 # in kp/h
+  speed_to_reach_max_v_diff_offset = 3 #26 # in kp/h
   speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
   delta_speed = v_lead - v_ego
   #delta_speed = 0.0 if abs(v_lead) < 0.5 else v_lead - v_ego
@@ -293,7 +293,6 @@ class LongitudinalMpc:
 
   def set_weights(self, prev_accel_constraint=True, personality=log.LongitudinalPersonality.standard):
     jerk_factor = get_jerk_factor(personality)
-    #jerk_factor /= np.mean(self.braking_offset)
     if self.mode == 'acc':
       a_change_cost = A_CHANGE_COST if prev_accel_constraint else 0
       cost_weights = [X_EGO_OBSTACLE_COST, X_EGO_COST, V_EGO_COST, A_EGO_COST, jerk_factor * a_change_cost, jerk_factor * J_EGO_COST]
@@ -352,21 +351,12 @@ class LongitudinalMpc:
     self.max_a = max_a
 
   def update(self, radarstate, v_cruise, x, v, a, j, personality=log.LongitudinalPersonality.standard):
-    #t_follow = get_T_FOLLOW(personality)
+    t_follow = get_T_FOLLOW(personality)
     v_ego = self.x0[1]
     self.status = radarstate.leadOne.status or radarstate.leadTwo.status
 
     lead_xv_0 = self.process_lead(radarstate.leadOne)
     lead_xv_1 = self.process_lead(radarstate.leadTwo)
-    #lead = radarstate.leadOne
-
-    self.smoother_braking = True if self.mode == 'acc' and np.any(v_ego < 40) and np.any(lead_xv_0[:,0] < 40) and not np.any(lead.dRel < (v_ego - 1) * t_follow) else False
-    if self.smoother_braking:
-      distance_factor = np.maximum(1, lead_xv_0[:,0] - (lead_xv_0[:,1] * t_follow))
-      self.braking_offset = np.clip((v_ego - lead_xv_0[:,1]) - COMFORT_BRAKE, 1, distance_factor)
-      t_follow = t_follow / self.braking_offset
-    else:
-      self.braking_offset = 1
 
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
