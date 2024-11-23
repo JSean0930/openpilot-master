@@ -41,7 +41,7 @@ J_EGO_COST = 5.0
 A_CHANGE_COST = 200.
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .25
-LEAD_DANGER_FACTOR = 0.65 #0.75 /0.525 /0.368
+LEAD_DANGER_FACTOR = 1.2 #0.75 /0.525 /0.368/0.65
 LIMIT_COST = 1e6
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
 
@@ -75,7 +75,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   elif personality==log.LongitudinalPersonality.standard:
     return 1.1
   elif personality==log.LongitudinalPersonality.aggressive:
-    return 1.35
+    return 1.4
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
