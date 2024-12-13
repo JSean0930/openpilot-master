@@ -73,7 +73,7 @@ def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
     return 1.0
   elif personality==log.LongitudinalPersonality.standard:
-    return 1.1
+    return 1.2
   elif personality==log.LongitudinalPersonality.aggressive:
     return 1.5
   else:
