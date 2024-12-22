@@ -3,12 +3,15 @@ import os
 import time
 import numpy as np
 from cereal import log
+from openpilot.common.conversions import Conversions as CV
 from opendbc.car.interfaces import ACCEL_MIN
 from openpilot.common.numpy_fast import clip
+from openpilot.selfdrive.car.toyota.values import ToyotaFlags
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
 # WARNING: imports outside of constants will not trigger a rebuild
 from openpilot.selfdrive.modeld.constants import index_function
+from openpilot.selfdrive.car.interfaces import ACCEL_MIN
 from openpilot.selfdrive.controls.radard import _LEAD_ACCEL_TAU
 
 if __name__ == '__main__':  # generating code
@@ -54,8 +57,8 @@ T_IDXS_LST = [index_function(idx, max_val=MAX_T, max_idx=N) for idx in range(N+1
 T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
-COMFORT_BRAKE = 2.5
-STOP_DISTANCE = 6.0
+COMFORT_BRAKE = 1.1 #.25
+STOP_DISTANCE = 5.0 #6.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -70,16 +73,29 @@ def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
 
 def get_T_FOLLOW(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
-    return 1.75
+    return 1.0
   elif personality==log.LongitudinalPersonality.standard:
-    return 1.45
-  elif personality==log.LongitudinalPersonality.aggressive:
     return 1.25
+  elif personality==log.LongitudinalPersonality.aggressive:
+    return 1.4
   else:
     raise NotImplementedError("Longitudinal personality not supported")
 
-def get_stopped_equivalence_factor(v_lead):
-  return (v_lead**2) / (2 * COMFORT_BRAKE)
+#def get_stopped_equivalence_factor(v_lead):
+  #return (v_lead**2) / (2 * COMFORT_BRAKE)
+
+def get_stopped_equivalence_factor(v_lead, v_ego):
+  # KRKeegan this offset rapidly decreases the following distance when the lead pulls
+  # away, resulting in an early demand for acceleration.
+  v_diff_offset = 0
+  v_diff_offset_max = 12 #12, 2
+  speed_to_reach_max_v_diff_offset = 24 #26, 4 # in kp/h
+  speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
+  delta_speed = v_lead - v_ego
+  #delta_speed = 0.0 if abs(v_lead) < 0.5 else v_lead - v_ego
+  if np.all(delta_speed > 0.5):
+    v_diff_offset = delta_speed * 40 #2
+    v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
 
 def get_safe_obstacle_distance(v_ego, t_follow):
   return (v_ego**2) / (2 * COMFORT_BRAKE) + t_follow * v_ego + STOP_DISTANCE
@@ -87,7 +103,7 @@ def get_safe_obstacle_distance(v_ego, t_follow):
 def desired_follow_distance(v_ego, v_lead, t_follow=None):
   if t_follow is None:
     t_follow = get_T_FOLLOW()
-  return get_safe_obstacle_distance(v_ego, t_follow) - get_stopped_equivalence_factor(v_lead)
+  return get_safe_obstacle_distance(v_ego, t_follow) - get_stopped_equivalence_factor(v_lead, v_ego)
 
 
 def gen_long_model():
@@ -343,8 +359,8 @@ class LongitudinalMpc:
     # To estimate a safe distance from a moving lead, we calculate how much stopping
     # distance that lead needs as a minimum. We can add that to the current distance
     # and then treat that as a stopped car/obstacle at this new distance.
-    lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1])
-    lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1])
+    lead_0_obstacle = lead_xv_0[:,0] + get_stopped_equivalence_factor(lead_xv_0[:,1], v_ego)
+    lead_1_obstacle = lead_xv_1[:,0] + get_stopped_equivalence_factor(lead_xv_1[:,1], v_ego)
 
     self.params[:,0] = ACCEL_MIN
     # negative accel constraint causes problems because negative speed is not allowed
