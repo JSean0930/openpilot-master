@@ -41,7 +41,7 @@ J_EGO_COST = 5.0
 A_CHANGE_COST = 200.
 DANGER_ZONE_COST = 100.
 CRASH_DISTANCE = .25
-LEAD_DANGER_FACTOR = 0.75
+LEAD_DANGER_FACTOR = 0.78 #0.75
 LIMIT_COST = 1e6
 ACADOS_SOLVER_TYPE = 'SQP_RTI'
 
@@ -56,7 +56,7 @@ T_IDXS = np.array(T_IDXS_LST)
 FCW_IDXS = T_IDXS < 5.0
 T_DIFFS = np.diff(T_IDXS, prepend=[0.])
 COMFORT_BRAKE = 1.1 #.25
-STOP_DISTANCE = 5.0 #6.0
+STOP_DISTANCE = 6.0
 
 def get_jerk_factor(personality=log.LongitudinalPersonality.standard):
   if personality==log.LongitudinalPersonality.relaxed:
@@ -86,8 +86,8 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   # KRKeegan this offset rapidly decreases the following distance when the lead pulls
   # away, resulting in an early demand for acceleration.
   v_diff_offset = 0
-  v_diff_offset_max = 12 #12, 2
-  speed_to_reach_max_v_diff_offset = 24 #26, 4 # in kp/h
+  v_diff_offset_max = 4 #12, 2
+  speed_to_reach_max_v_diff_offset = 8 #26, 4 # in kp/h
   speed_to_reach_max_v_diff_offset = speed_to_reach_max_v_diff_offset * CV.KPH_TO_MS
   delta_speed = v_lead - v_ego
   #delta_speed = 0.0 if abs(v_lead) < 0.5 else v_lead - v_ego
