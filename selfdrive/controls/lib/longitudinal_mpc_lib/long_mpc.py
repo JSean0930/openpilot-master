@@ -33,7 +33,7 @@ COST_E_DIM = 5
 COST_DIM = COST_E_DIM + 1
 CONSTR_DIM = 4
 
-X_EGO_OBSTACLE_COST = 3.
+X_EGO_OBSTACLE_COST = 6. #3.
 X_EGO_COST = 0.
 V_EGO_COST = 0.
 A_EGO_COST = 0.
@@ -92,7 +92,8 @@ def get_stopped_equivalence_factor(v_lead, v_ego):
   delta_speed = v_lead - v_ego
   #delta_speed = 0.0 if abs(v_lead) < 0.5 else v_lead - v_ego
   if np.all(delta_speed > 0.5):
-    v_diff_offset = delta_speed * 40 #2
+    #v_diff_offset = delta_speed * 40 #2
+    v_diff_offset = delta_speed**4
     v_diff_offset = np.clip(v_diff_offset, 0, v_diff_offset_max)
 
     v_diff_offset = np.maximum(v_diff_offset * ((speed_to_reach_max_v_diff_offset - v_ego)/speed_to_reach_max_v_diff_offset), 0)
