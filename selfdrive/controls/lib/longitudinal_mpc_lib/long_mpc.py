@@ -4,7 +4,7 @@ import time
 import numpy as np
 from cereal import log
 from openpilot.common.conversions import Conversions as CV
-from opendbc.car.interfaces import ACCEL_MIN
+#from opendbc.car.interfaces import ACCEL_MIN
 from openpilot.common.numpy_fast import clip
 from openpilot.common.realtime import DT_MDL
 from openpilot.common.swaglog import cloudlog
@@ -32,6 +32,8 @@ PARAM_DIM = 6
 COST_E_DIM = 5
 COST_DIM = COST_E_DIM + 1
 CONSTR_DIM = 4
+
+ACCEL_MIN = 1.5
 
 X_EGO_OBSTACLE_COST = 6. #3.
 X_EGO_COST = 0.
